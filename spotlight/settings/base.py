@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rn%d3o=@lxxxqebhfza-=4()ikw&f!h^31dr9gjcj^x(c1!t-c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'spotlight.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'spotlight'),
-        'USER': os.environ.get('DB_USER', 'spotlight'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'spotlight'),
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': 'wpjxpsad',
+        'USER': 'wpjxpsad',
+        'PASSWORD': 'V3zySqP1b36SE3QrsWXQl2Fop-j3WxaC',
+        'HOST': 'lallah.db.elephantsql.com',
+        'PORT': '5432',
     }
 }
 
@@ -156,8 +156,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Default primary key field type
