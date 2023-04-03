@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+Django = "*"
 django = "4.1.7"
 django-admin = "2.0.2"
 shroomdk = "*"
