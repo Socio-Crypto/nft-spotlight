@@ -2,7 +2,7 @@
 	"version": 2,
 	"builds": [
 	  {
-		"src": "SquidFlow/wsgi.py",
+		"src": "spotlight/wsgi.py",
 		"use": "@vercel/python",
 		"config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
 	  },
@@ -21,7 +21,7 @@
 	  },
 	  {
 		"src": "/(.*)",
-		"dest": "SquidFlow/wsgi.py"
+		"dest": "spotlight/wsgi.py"
 	  }
 	]
 

@@ -7,7 +7,4 @@ import os
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["nft-spotlight.herokuapp.com",
-                "spotlight-explorer.herokuapp.com",
-                "herokuapp.com",
-                "explorer.nft-spotlight.xyz"]
+ALLOWED_HOSTS = ["*"]
