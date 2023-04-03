@@ -9,7 +9,6 @@ django-admin = "2.0.2"
 shroomdk = "*"
 abacusai = "*"
 beautifulsoup4 = "*"
-psycopg2-binary = "*"
 pillow = "*"
 psycopg2 = "*"
 
