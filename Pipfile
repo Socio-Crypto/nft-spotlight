@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 Django = "*"
-django = "4.1.7"
-django-admin = "2.0.2"
+django = "*"
+django-admin = "*"
 shroomdk = "*"
 abacusai = "*"
 beautifulsoup4 = "*"
