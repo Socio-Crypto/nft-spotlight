@@ -11,6 +11,7 @@ psycopg2-binary = "*"
 django = "*"
 pillow = "*"
 psycopg2 = "*"
+django-admin = "*"
 
 [dev-packages]
 
