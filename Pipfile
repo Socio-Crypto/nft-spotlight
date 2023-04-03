@@ -10,8 +10,6 @@ beautifulsoup4 = "*"
 psycopg2-binary = "*"
 django = "*"
 pillow = "*"
-gunicorn = "*"
-whitenoise = "*"
 
 [dev-packages]
 
