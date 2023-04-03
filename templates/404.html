@@ -1,0 +1,31 @@
+﻿{% extends "base-registration.html" %}
+{% load i18n %}
+{% load formcss %}
+{% load static %}
+
+{% block description %} 
+<h3>PAGE NOT F<i class="zmdi zmdi-mood-bad"></i>UND</h3>
+<p>We couldn't find the page you're looking for.</p>
+{% endblock description %} 
+
+{% block content %}                    
+<div class="col-lg-5 col-md-12 offset-lg-1">
+    <div class="card-plain">
+        <div class="header">
+            <h5>Error 404</h5>
+            <span>Page not found</span>
+        </div>
+        <form class="form">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter your search term...">
+                <span class="input-group-addon"><i class="zmdi zmdi-search"></i></span>
+            </div>
+        </form>
+        <div class="footer">
+            <a href="" class="btn btn-primary btn-round btn-block">Back To Home</a>                            
+        </div>
+        <a href="javascript:void(0);" class="link">Need Help?</a>
+    </div>
+</div>
+
+{% endblock %}

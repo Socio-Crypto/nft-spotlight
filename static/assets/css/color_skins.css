@@ -1,0 +1,79 @@
+
+.theme-blue .btn-primary {
+  background: #D502F6;
+}
+.theme-blue .btn-primary:active,
+.theme-blue .btn-primary:hover,
+.theme-blue .btn-primary:focus {
+  background: #D502F6;
+}
+.theme-blue .btn-primary.btn-simple {
+  border-color: #D502F6;
+  color: #D502F6;
+  background: transparent;
+}
+.theme-blue .page-loader-wrapper,
+.theme-blue .active-bg {
+  background: #1E1E1E;
+}
+.theme-blue .sidebar .menu .list li.active.open .active a {
+  color: #D502F6;
+}
+.theme-blue .sidebar .menu .list a:hover {
+  color: #D502F6;
+}
+.theme-blue .sidebar.h_menu .menu li.active.open > a {
+  color: #D502F6;
+}
+.theme-blue .sidebar.h_menu .menu li.active.open > a:before {
+  background: #D502F6;
+}
+.theme-blue .sidebar.h_menu .menu li a:hover:before {
+  background: #D502F6;
+}
+.theme-blue .checkbox input[type="checkbox"]:checked + label::after {
+  border-color: #D502F6;
+  background: #D502F6;
+  color: #fff;
+}
+.theme-blue .nav-tabs .nav-link.active {
+  border: 1px solid #D502F6 !important;
+  background: #D502F6;
+  color: #fff;
+}
+.theme-blue .card .header h2:before {
+  background: #D502F6;
+}
+.theme-blue .card .header h2 strong {
+  color: #D502F6;
+}
+.theme-blue .card .header .dropdown-menu li a:hover {
+  background-color: #D502F6;
+  color: #fff;
+}
+.theme-blue .authentication .navbar,
+.theme-blue .authentication .page-header {
+  background: #D502F6 !important;
+}
+.theme-blue .form-control:focus,
+.theme-blue .form-control:focus + .input-group-addon,
+.theme-blue .form-control:focus ~ .input-group-addon {
+  border-color: #D502F6;
+}
+.theme-blue.theme-dark .top_navbar {
+  background: #D502F6;
+}
+.theme-blue.theme-dark .input-group-focus .input-group-addon {
+  border-color: #D502F6;
+}
+
+.theme-blue a.footer-link {
+  font-size: 8px;
+
+}
+
+@media screen and (min-width: 960px) {
+  .footer-link {
+    font-size: 16px  !important;
+  }
+}

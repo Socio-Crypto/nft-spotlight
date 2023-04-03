@@ -1,0 +1,108 @@
+{% extends "base-dashboard.html" %}
+{% load l10n %}
+{% load static %}
+{% load utility_tags %}
+
+{% block title %}
+Gallery  
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+      <a href="#"><i class="icon-home"></i></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card">
+        <div class="body">
+          <div class="row clearfix">
+          
+            {% for nft in nfts %}
+            {% if nft %}
+            <div class="col-lg-2 col-md-3 col-sm-12">
+              <div class="card product_item">
+                <div class="body">
+                  <div class="cp_img">
+                    <img src="https://ipfs.algonft.tools/ipfs/{{ nft.hash }}" alt="Product" class="img-fluid" style="border-radius: 37px;" />
+                  </div>
+                  <div class="product_details">
+                    <ul class="product_price list-unstyled" style="text-align: -webkit-center;">
+                      <li class="old_price">{{ nft.price }} <img class="guide-cont shadow-sm" width="15px" src="/static/images/icons/algorand_logo.png"></li>
+                      <li class="old_price">#{{ nft.asset_id }}</li>
+                      <li class="old_price">#{{ nft.collection_name }}</li>
+                    </ul>
+                    <div class="form-row align-items-center">
+                      <div class="col" style="text-align: -webkit-center;">
+                        <button type="submit" class="buy-nft btn btn-primary btn-round" data-nft_id="{{ nft.id }}" style="    width: -webkit-fill-available;">Buy</button>
+                      </div>
+                    </div>
+                      <div class="form-row align-items-center">
+                    
+                      <div class="col" style="text-align: -webkit-center;">
+                        <button type="submit" class="explore-nft btn btn-primary btn-round" data-nft_id="{{ nft.id }}" style="background-color: #e45ef9;    width: -webkit-fill-available;">Explore</button>
+                      </div>
+                    <input type="hidden" id="nft_asset_{{ nft.id }}" value="{{ nft.asset_id }}">
+                    <input type="hidden" id="price_{{ nft.id }}" value="{{ nft.price }}">
+                    <input type="hidden" id="asset_hash_{{ nft.id }}" value="{{ nft.hash }}">
+                    <input type="hidden" id="collection_name_{{ nft.id }}" value="{{ nft.collection_name }}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'frontend/main.js' %}"></script>
+<script src="{% static 'react_component/bundle.js' %}"></script>
+<script src="assets/bundles/libscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) --> 
+<script src="assets/bundles/vendorscripts.bundle.js"></script> <!-- slimscroll, waves Scripts Plugin Js -->
+<script src="assets/bundles/mainscripts.bundle.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="assets/js/pages/widgets/infobox/infobox-1.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+  $(document).ready(function () {
+    const baseUrl = "https://nft-spotlight-algowallet.herokuapp.com/"
+
+    $('.buy-nft').on('click',function(e){
+      var nft_id = $(this).data('nft_id');
+      var price = document.getElementById('price_'+ nft_id).value;
+      var nft_asset_id = document.getElementById('nft_asset_'+ nft_id).value;
+      var asset_hash = document.getElementById('asset_hash_'+ nft_id).value;
+
+        window.location.href = baseUrl + '?trade_id=buy&asset_id=' + nft_asset_id + '&asset_price=' + price + '&asset_hash=' + asset_hash;
+    });
+    
+    $('.explore-nft').on('click',function(e){
+      const exploreUrl = "https://spotlight-explorer.herokuapp.com/"
+
+      var nft_id = $(this).data('nft_id');
+      var nft_asset_id = document.getElementById('nft_asset_'+ nft_id).value;
+      var collection_name = document.getElementById('collection_name_'+ nft_id).value;
+
+        window.location.href = exploreUrl + '?trade_id=buy&nft_asset_id=' + nft_asset_id  + '&collection_name=' + collection_name;
+    });
+
+  });
+</script>
+
+
+{% endblock %} 

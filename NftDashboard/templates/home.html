@@ -1,0 +1,278 @@
+{% extends "base-dashboard.html" %}
+{% load l10n %}
+{% load static %}
+
+{% block title %}
+Collection Explorer   
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="#"><i class="icon-home"></i></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-xl-4 col-lg-5 col-md-12">
+        <div class="card member-card">
+            <div class="header l-parpl">
+                <h4 class="m-t-0">#{{ tokenid }}</h4>
+            </div>
+            <div class="member-img">
+                <a href="https://img.seadn.io/files/09747349d56455e99e4bc0d6485c8f2c.png?fit=max&w=1000" class="">
+                    <img class="rounded-circle" src="https://img.seadn.io/files/09747349d56455e99e4bc0d6485c8f2c.png?fit=max&w=1000"  alt="profile-image">
+                </a>
+            </div>
+            <div class="body">
+                <div class="col-12">
+                    <ul class="social-links list-unstyled">
+                        <li>
+                            <a title="facebook" href="javascript:void(0);">
+                                <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/opensea.svg">
+                            </a>
+                        </li>
+                        <li>
+                            <a title="twitter" href="javascript:void(0);">
+                                <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/twitter.svg">
+                            </a>
+                        </li>
+                        <li>
+                            <a title="instagram" href="javascript:void(0);">
+                                <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/discord.svg">
+                            </a>
+                        </li>
+                        <li>
+                            <a title="instagram" href="javascript:void(0);">
+                                <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/web.svg">
+                            </a>
+                        </li>
+
+                    </ul>
+                    <p class="text-muted">Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-4">
+                        <h5>{{ n_sales }}</h5>
+                        <small># Sales</small>
+                    </div>
+                    <div class="col-4">
+                        <h5>{{ avg_price|floatformat:1 }}</h5>
+                        <small>Average Price</small>
+                    </div>
+                    <div class="col-4">
+                        <h5>{{ last_price }}</h5>
+                        <small>Last Price</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-12">
+        <div class="card">
+            <div class="body"> 
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#profile">Price history</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#properties">Properties</a></li>
+                </ul>                        
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    
+                    <div role="tabpanel" class="tab-pane in active" id="profile"> 
+                        <input type="hidden" id="price_prediction" value="{{ predicted_price }}">
+                        <div class="row clearfix">
+                            <div class="col-xl-12 col-lg-12 col-md-12">
+                              <div class="card">
+                                <div class="body">
+                                  <div id="sales_price" data-sales_price="{{ sales_data|unlocalize }}"></div>
+                                  <p
+                                    class="d-flex justify-content-center"
+                                    style="
+                                      align-content: center;
+                                      font-variant-caps: all-petite-caps;
+                                    "
+                                  ></p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="properties">
+                        <div class="card">
+                            <div class="body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover m-b-0">
+                                        <tbody>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle text-success"></i></th>
+                                                <td>Background</td>
+                                                <td><span>{{ background }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-up"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle text-info"></i></th>
+                                                <td>Cloths</td>
+                                                <td><span>{{ clothes }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-up"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle text-warning"></i></th>
+                                                <td>Eyes</td>
+                                                <td><span>{{ eyes }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-down"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle text-danger"></i></th>
+                                                <td>Fur</td>
+                                                <td><span>{{ fur }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-up"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle"></i></th>
+                                                <td>Hat</td>
+                                                <td><span>{{ Hat }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-down"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th><i class="zmdi zmdi-circle"></i></th>
+                                                <td>Mouth</td>
+                                                <td><span>{{ mouth }}</span></td>
+                                                <td>X% have this treat <i class="zmdi zmdi-caret-down"></i></td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+</div>
+    
+{% endblock %}
+
+{% block scripts %}
+	
+<script src="assets/bundles/libscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) --> 
+<script src="assets/bundles/vendorscripts.bundle.js"></script> <!-- slimscroll, waves Scripts Plugin Js -->
+<script src="assets/bundles/mainscripts.bundle.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="assets/js/pages/widgets/infobox/infobox-1.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script type="text/javascript">
+    price_list = [];
+    async function sales_price_api(){
+    var price_predicted = document.getElementById('price_prediction').value;
+    console.log(price_predicted);
+    var elem = document.getElementById('sales_price');
+    line_data = JSON.parse(elem.getAttribute('data-sales_price'));
+    for (let index = 0; index < line_data.length; index++) {
+      const y_element = line_data[index];
+      if (
+        (y_element["PRICE"] != null) &
+        (y_element["DATE"] != null)
+      ) {
+        // list.push(y_element['DATE'].slice(5,7)+'/'+y_element['DATE'].slice(8,10)+'/'+y_element['DATE'].slice(0,4))
+        price_list.push([
+          y_element["DATE"],
+          y_element["PRICE"],
+        ]);
+      }
+    }
+      console.log(price_list)
+      var options = {
+            series: [{
+            name: 'Price',
+            data: price_list
+          }],
+            chart: {
+            type: 'line',
+            stacked: false,
+            height: 350,
+            zoom: {
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            },
+       
+          },
+          annotations: {
+          yaxis: [{
+            y: price_predicted,
+            borderColor: '#00E396',
+            label: {
+              borderColor: '#00E396',
+              style: {
+                color: '#fff',
+                background: '#00E396',
+              },
+              text: 'Prediction',
+            }
+          }]
+        },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'smooth',
+            width: 2
+          },
+          markers: {
+            size: 0,
+          },
+          title: {
+            text: '',
+            align: 'left'
+          },
+         
+          yaxis: {
+            labels: {
+              formatter: function (val) {
+                return (val).toFixed(0);
+              },
+            //   style:{
+            //   colors:['white']
+            //  }
+              
+            },
+            title: {
+              text: ''
+            },
+            // min:0,
+            max:40
+          },
+          colors:['black'],
+  
+          xaxis: {
+            type: 'datetime',
+            labels:{
+            //   style:{
+            //   colors:'white'
+            // }
+            }
+          },
+          tooltip: {
+            shared: false,
+
+          }
+          };
+  
+          var chart = new ApexCharts(document.querySelector("#sales_price"), options);
+          chart.render();
+    };
+    sales_price_api();
+</script>
+{% endblock %} 

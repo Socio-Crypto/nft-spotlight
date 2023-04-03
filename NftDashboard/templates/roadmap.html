@@ -1,0 +1,39 @@
+{% extends "base-dashboard.html" %}
+{% load l10n %}
+{% load static %}
+{% load utility_tags %}
+
+{% block title %}
+Road Map 
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+      <a href="{% url 'collection_explorer' %}"><i class="icon-home"></i></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-lg-12 col-md-12 col-sm-12" style="text-align: -webkit-center;">
+			<img src="{% static 'images/icons/roadmap.png' %}" alt="road map">
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'frontend/main.js' %}"></script>
+<script src="{% static 'react_component/bundle.js' %}"></script>
+<script src="assets/bundles/libscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) --> 
+<script src="assets/bundles/vendorscripts.bundle.js"></script> <!-- slimscroll, waves Scripts Plugin Js -->
+<script src="assets/bundles/mainscripts.bundle.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="assets/js/pages/widgets/infobox/infobox-1.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+{% endblock %} 

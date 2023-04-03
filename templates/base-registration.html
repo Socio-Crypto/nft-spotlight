@@ -1,0 +1,58 @@
+{% load static %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as bidi %}
+<!doctype html>
+<html class="no-js " lang="LANGUAGE_CODE">
+
+<head>
+    {% include "includes/_base-head.html" %}
+
+    {% block extra_css %}{% endblock extra_css %}
+   
+
+</head>
+
+<body class="theme-purple {% if bidi %}rtl{% endif %}">
+
+
+    {% include "includes/_message.html" %}
+
+    <div class="authentication" >
+        <div class="container">
+            <div class="col-md-12 content-center">
+                <div class="row clearfix">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="company_detail">
+                            <h4 class="logo">
+                                <a href="{% url 'home' %}">
+                                <img src="{% static 'images\Ellipse 45.png' %}" alt="Logo">
+                                </a>
+                                {% trans "" %}
+                            </h4>
+                                {% block content_title %}
+                                <p><strong>
+                                    <h5>{% trans "AAVE" %}</h5></strong>
+                                </p>  
+                                {% endblock content_title %}  
+                                
+                        </div>
+                    </div>    
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <div id="particles-js"></div>
+    </div>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+<script src="{% static 'assets/bundles/libscripts.bundle.js' %}"></script>
+<script src="{% static 'assets/bundles/vendorscripts.bundle.js' %}"></script> <!-- Lib Scripts Plugin Js -->
+
+<script src="{% static 'assets/plugins/particles-js/particles.min.js' %}"></script>
+<script src="{% static 'assets/plugins/particles-js/particles.js' %}"></script>
+</body>
+</html>

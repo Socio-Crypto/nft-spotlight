@@ -1,0 +1,600 @@
+{% extends "base-dashboard.html" %}
+{% load l10n %}
+{% load static %}
+{% load utility_tags %}
+
+{% block title %}
+NFT Explorer   
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+      <a href="#"><i class="icon-home"></i></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card">
+        <div class="body">
+          <p>Select an NFT collection to continue</p>
+          <div class="row clearfix">
+            <dif class="col">
+              <select id="selected_collection" class="form-control select-subject" select="selected" style="border-radius: 10px !important;">
+                {% for collection in collections %}
+                <option value="{{ collection.id }}" data-collection_id="{{ collection.id }}">
+                  {{ collection.name }}
+                </option>
+                {% endfor %}
+              </select>
+
+            </dif>
+            <div class="col">
+
+              <div class="row clearfix">
+                <div class="col-lg-6 col-md-6">
+                  <input name="" type="number" min="1" class="form-control" id="n_asset" placeholder="Asset ID">
+                </div>
+                <div class="col-lg-2">
+                  <button type="submit" class="search-nft btn btn-primary btn-round" style="margin-top: -4px;"><span
+                      class="iconify" data-icon="akar-icons:search"></span></button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <form method="POST" id="search_form" action="{% url 'collection_explorer' %}">
+      <input id ="n_asset" type="hidden" value="" name="n_asset">
+      <input id ="collection_id" type="hidden" value="" name="collection_id">
+      {% csrf_token %}
+    </form>
+  </div>
+  {% if show_nft %}
+  <div class="row clearfix">
+    <div class="col-xl-4 col-lg-5 col-md-12">
+      <div class="card member-card">
+        <div class="header">
+        </div>
+        <div class="member-img">
+          <a href="{% if image_url %}https://ipfs.algonft.tools/ipfs/{{ image_url }}{% else %}{% static 'images/icons/logo_concept_3_circle.png' %}{% endif %}"
+            class="rounded">
+            <img class="rounded"
+              src="{% if image_url %}https://ipfs.algonft.tools/ipfs/{{ image_url }}{% else %}{% static 'images/icons/logo_concept_3_circle.png' %}{% endif %}"
+              alt="profile-image" width="361px !important">
+          </a>
+        </div>
+        <div class="body">
+          <div class="col-12">
+            <ul class="social-links list-unstyled">
+              <li>
+                <a title="" href="https://www.nftexplorer.app/asset/{{ nft_asset_id }}" target="_blank">
+                 <img width="27px" style="height: 29px;
+                 width: 31px;
+               border-radius:18px;" src="/static/images/icons/nftexplorer.jpg"  >
+                  
+                </a>
+              </li>
+              <li>
+                <a title="" href="https://algoexplorer.io/asset/{{ nft_asset_id }}" target="_blank">
+                 <img width="27px" style="height: 35px;     margin-left: -13px;
+                 width: 35px;" src="/static/images/icons/algoexplorer.jpg">
+                  
+                </a>
+              </li>
+  
+            </ul>
+           
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-4">
+              <h5>{{ num_sales }}</h5>
+              <small># Sales</small>
+            </div>
+            <div class="col-4">
+              <h5>{{ average_price|floatformat:1 }}</h5>
+              <small>Average Price</small>
+            </div>
+            <div class="col-4">
+              <h5>{{ last_sale|floatformat:1 }}</h5>
+              <small>Last Price</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if image_url %}
+  
+      <ul class="row location_list list-unstyled">
+        {% for key,value in features.items %}
+        <li class="col-lg-6 col-md-6 col-6">
+          <div class="body xl-parpl" style="border-radius: 10px; margin: 16px !important;">
+            <br>
+            <span><strong style="font-size: larger;">{{ key }}</strong></span>
+            <p class="text">{{ value }}</p>
+            {% get_feature traits_rarity key value as rarity %}
+            <span><strong style="font-size: larger;">{{ rarity }} % have this treat</strong></span>
+            
+            <p>    </p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <div class="card">
+        <div class="header">
+          <h2>Collection Details</h2>
+        </div>
+        <div class="body widget-user">
+          <img class="rounded-circle" style="width: 72px;"    
+            src="{% if image_name %}static/images/collection_images/{{ image_name }}.png{% else %}{% static 'images/icons/logo_concept_3_circle.png' %}{% endif %}"
+            alt="">
+          <div class="wid-u-info">
+            <h5>{{ collection.name }}</h5>
+  
+            <p class="text-muted m-b-0">{{ collection.description }} </p>
+          </div>
+          <hr>
+          <div class="col-12">
+          
+            {% if collection.twitter_link %}
+              <a title="twitter" href="{% if collection.twitter_link %}{{ collection.twitter_link }}{% else %}#{% endif %}" target="_blank">
+                <img width="27px" style="margin: 5px;"src="/static/images/icons/twitter.svg">
+              </a>
+            {% endif %}
+        
+              <a title="" href="https://www.nftexplorer.app/asset/{{ nft_asset_id }}" target="_blank">
+               <img style="margin-top: 26px;     height: 31px;  border-radius:18px;" src="/static/images/icons/nftexplorer.jpg"  >
+              </a>
+
+              <a title="" href="https://algoexplorer.io/asset/{{ nft_asset_id }}" target="_blank">
+               <img style="    margin-top: 23px;
+               margin-left: 10px;
+               height: 37px;" src="/static/images/icons/algoexplorer.jpg">
+              </a>
+          
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-12">
+      <div class="card">
+        <div class="body">
+          <div class="row">
+            <div class="col-12">
+              {% if predicted_price %}
+              <h6>collection Name: {% if collection.name %}{{ collection.name }}{% else %}{{ sales_data_table.project_name }}{% endif %}  <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/tick.svg"></h6>
+              {% else %}
+              <h6>We are not able to provide you with the estimated price for this NFT. This function supports Collections listed above.</h6>
+              {% endif %}
+              <p class="m-t-0">#{{ nft_asset_id }}</p>
+            </div>
+            <div class="col-4 pw_meta" style="align-self: center;">
+              <h6>{% if predicted_price %}Predicted Price: {{ predicted_price }} 
+                {% if blockchain == 'algo' %}<img class="guide-cont shadow-sm" width="17px" src="/static/images/icons/algorand_logo.png">
+                {% elif blockchain == 'avalanche' %}<img class="guide-cont shadow-sm" width="15px" src="/static/images/icons/avalanche.png">
+                {% elif blockchain == 'polygon' %}<img class="guide-cont shadow-sm" width="20px" src="/static/images/icons/polygon.jpg">
+                {% endif %}
+                {% endif %}
+              </h6>
+            </div>
+            <div class="col-8">
+                <div class="form-row align-items-center">
+                  <div class="col-auto my-1">
+                    <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                    <select class="form-control" id="selected_action" style="border-radius: 10px !important;">
+                      <option value="1">Sell</option>
+                      <option value="2">Buy</option>
+                    </select>
+                  </div>
+                  <div class="col-auto my-1">
+                    <button type="submit" class="sell-buy-nft btn btn-primary btn-round">Submit</button>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="body">
+          <input type="hidden" id="asset_hash" value="{{ image_url }}">
+          <input type="hidden" id="contract_id" value="{{ contract_id }}">
+          <input type="hidden" id="token_id" value="{{ nft_asset_id }}">
+          <input type="hidden" id="price_prediction" value="{{ predicted_price }}">
+          <input type="hidden" id="blockchain_id" value="{{ blockchain }}">
+          <input type="hidden" id="today_date" value="{{ today_date }}">
+          <input type="hidden" id="collection_name" value="{{ contract_id }}">
+
+    
+          <div id="sales_price" data-sales_price="{{ scatter_plot_data|unlocalize }}"></div>
+          <p class="d-flex justify-content-center" style="align-content: center;font-variant-caps: all-petite-caps;"></p>
+    
+        </div>
+      </div>
+      {% if blockchain == 'algo' %}
+      <div class="card">
+        <div class="body">    
+          <div id="box_plot" data-box_plot="{{ box_plot_data|unlocalize }}"></div>
+          <p class="d-flex justify-content-center" style="align-content: center;font-variant-caps: all-petite-caps;"></p>
+    
+        </div>
+      </div>
+      {% endif %}
+      <div class="card">
+        <div class="header">
+          <h2>Item Activity</h2>
+        </div>
+        <div class="body table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Price</th>
+                <!-- <th>From</th> -->
+                <th>to</th>
+                <th>Marketplace</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if blockchain == 'algo' %}
+              {% for item in item_activity %}
+              <tr>
+                <td>
+                  {% if item.label == 'sale' %}
+                  <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/sale.svg">
+                  {% elif item.label == 'transfer' %}
+                  <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/transfered.svg">
+                  {% elif item.label == 'list' %}
+                  <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/list.svg">
+                  {% elif item.label == 'mint' %}
+                  <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/mint.svg">
+                  {% endif %}
+                  {{ item.label }}
+                </td>
+                <td>
+                  {% if item.price %}
+                    {% if blockchain == 'algo' %}<img class="guide-cont shadow-sm" width="17px" src="/static/images/icons/algorand_logo.png">
+                    {% elif blockchain == 'avalanche' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/avalanche.png">
+                    {% elif blockchain == 'polygon' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/polygon.jpg">
+                    {% endif %}
+                    
+                  {% endif %}
+                  {{ item.price|floatformat:1 }}</td>
+                  <!-- <td>{{ item.seller_address|truncatechars:7 }}</td> -->
+                  <td>{{ item.buyer_address|truncatechars:7 }}</td>
+                  <td>{{ item.platform_name }}</td>
+                  <td><a href="https://etherscan.io/tx/{{ item.tx_hash }}/" target="_blank">{{ item.date|get_date }}</a></td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              {% for value in sales_data_table %}
+                <tr>
+                  <td>
+                    <img class="guide-cont shadow-sm" width="18px" src="/static/images/icons/sale.svg">
+                    sale
+                  </td>
+                  <td>
+                    <!-- {% if item.price %}
+                    <img class="guide-cont shadow-sm" width="9px"
+                      src="/static/images/icons/algorand_logo.png">
+                      {% endif %} -->
+                    {{ value.price|floatformat:1 }}</td>
+                    <td>{{ value.seller|truncatechars:7 }}</td>
+                    <td>{{ value.buyer|truncatechars:7 }}</td>
+                    <td><a href="https://etherscan.io/tx/{{ value.tx_hash }}/" target="_blank">{{ value.date|get_date }}</a></td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'frontend/main.js' %}"></script>
+<script src="{% static 'react_component/bundle.js' %}"></script>
+<script src="assets/bundles/libscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) --> 
+<script src="assets/bundles/vendorscripts.bundle.js"></script> <!-- slimscroll, waves Scripts Plugin Js -->
+<script src="assets/bundles/mainscripts.bundle.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="assets/js/pages/widgets/infobox/infobox-1.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+  $(document).ready(function () {
+      content = "You should be aware that the risk of loss in trading or holding cryptoassets can be very high. As with any asset, the value of cryptoassets can go up or down and there can be a substantial risk that you lose all your money buying, selling, holding or investing in cryptoassets. Your use of NFT Spotlight involves various risks, including, but not limited to, losses while digital assets are being supplied to NFT Spotlight and losses due to the fluctuation of prices of tokens and the NFT assets. You are responsible for doing your diligence on the risks involved."+ "\n"+" NFT SPOTLIGHT TAKES NO RESPONSIBILITY FOR THE VALIDITY OF ANY OF THE INFORMATION PROVIDED INCLUDING, BUT NOT LIMITED TO THE PROJECTED VALUE AND AVAILABILITY OF NFT ASSETS OR THE LIKELIHOOD OF THEIR SALE. NFT SPOTLIGHT IS PROVIDED 'AS IS', AT YOUR OWN RISK, AND WITHOUT WARRANTIES OF ANY KIND."+ "\n" +" Accordingly, no developer or entity involved in creating NFT Spotlight will be liable for any claims or damages whatsoever associated with your use, inability to use, or your interaction with other users of NFT Spotlight , including any direct, indirect, incidental, special, exemplary, punitive or consequential damages, or loss of profits, NFTs, cryptocurrencies, tokens, or anything else of value."
+
+      $(".disclaimer").on('click', function (e) {
+          var confirm = true;
+          var title = "Disclaimer";
+          btnClass = "btn-blue";
+          content = content
+          showConfirmButton = true;
+          swal({
+              title: title,
+              text: content,
+              // type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Confirm",
+              cancelButtonText: "Reject",
+              showConfirmButton: true,
+              closeOnConfirm: true,
+              closeOnCancel: true
+          }, function (confirm) {
+              if (confirm) {
+                  if (confirm) { 
+                      console.log('swal')
+                  }
+              }
+          });
+      })
+  });
+
+</script>
+<script>
+  $(document).ready(function () {
+    const baseUrl = "https://nft-spotlight-algowallet.herokuapp.com/"
+  
+    var contract_id = document.getElementById('contract_id').value;
+    var asset_id = document.getElementById('token_id').value;
+    var price_prediction = document.getElementById('price_prediction').value;
+    var blockchain_id = document.getElementById('blockchain_id').value;
+    var asset_hash = document.getElementById('asset_hash').value;
+    var collection_name = document.getElementById('collection_name').value;
+    
+    // trade_id = buy or sell
+    // asset_id = nft-id
+    // asset_price
+
+    $('.sell-buy-nft').on('click',function(e){
+      var action = $('#selected_action').val();
+      if (action == 1){
+        // https://spotlight-node.herokuapp.com/sell?ca=123456&ti=asd123456&p=500&bc=eth
+        window.location.href = baseUrl + '?trade_id=sell&asset_id=' + asset_id + '&asset_price=' + price_prediction  + '&collection_name=' + collection_name  + '&asset_hash=' + asset_hash;
+      } else{
+        window.location.href = baseUrl + '?trade_id=buy&asset_id=' + asset_id + '&asset_price=' + price_prediction  + '&collection_name=' + collection_name  + '&asset_hash=' + asset_hash;
+      }
+
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+    $(".search-nft").on('click', function (e) {
+      // n_asset selected_collection data-collection_id
+      var btn = $(this);
+      var collection_id = $('#selected_collection').val();
+      n_asset = document.getElementById("n_asset").value
+      $("[name='n_asset']").val(n_asset)
+      $("[name='collection_id']").val(collection_id)
+
+      var confirm = true;
+      console.log('collection_id', confirm)
+      var title = "Search a NFT";
+      var [content, btnClass, showConfirmButton] = setModalContent(collection_id, n_asset, confirm);
+      if(!showConfirmButton) {
+        swal({
+          title: title,
+          text: content,
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes",
+          cancelButtonText: "Close",
+          showConfirmButton: showConfirmButton,
+          closeOnConfirm: true,
+          closeOnCancel: true
+        }, function (confirm) {
+          if (confirm) {
+            var form = $("#search_form");
+            var url = btn.attr("data-url");
+            $(form).attr('action', url);
+            document.querySelector('#search_form').submit();
+  
+          }
+        });
+
+      }else{
+        var form = $("#search_form");
+        var url = btn.attr("data-url");
+        var n_asset = document.getElementById('n_asset').value;
+        var collection_id = document.getElementById('collection_id').value;
+        document.querySelector('#search_form').submit();
+
+        $.ajax({
+                  method: "POST",
+                  url: form.attr("action"),
+                  data: {
+                          "n_asset": n_asset,
+                          "collection_id": collection_id,
+                          'csrfmiddlewaretoken':  '{{ csrf_token }}',
+                        },
+              })
+        // function (confirm) {
+        //   if (confirm) {
+        //     var form = $("#search_form");
+        //     var url = btn.attr("data-url");
+        //     $(form).attr('action', url);
+        //     document.querySelector('#search_form').submit();
+  
+        //   }
+        // }
+      }
+    })
+  });
+
+  function setModalContent(collection_id, n_asset, confirm) {
+    var content, btnClass, showConfirmButton
+    if (!collection_id) {
+      content = "Please select a collection";
+      btnClass = "btn-danger";
+      showConfirmButton = false;
+    } else if (!n_asset) {
+      content = "Please enter the NFT ID";
+      btnClass = "btn-danger";
+      showConfirmButton = false;
+    } else if (confirm) {
+      content = "search";
+      btnClass = "btn-blue";
+      showConfirmButton = true;
+    }
+    return [content, btnClass, showConfirmButton];
+  }
+
+</script>
+
+
+<script type="text/javascript">
+  transfer_list = [];
+  sale_list = [];
+  mint_list = [];
+  predicted_price_list = []
+  async function sales_price_api() {
+    
+    var price_predicted = document.getElementById('price_prediction').value;
+    var today_date = JSON.parse(document.getElementById('today_date').value);
+    predicted_price_list.push([today_date, price_predicted],);
+    console.log(predicted_price_list)
+    console.log(sale_list)
+    var elem = document.getElementById('sales_price');
+    line_data = JSON.parse(elem.getAttribute('data-sales_price'));
+    for (let index = 0; index < line_data.length; index++) {
+      const y_element = line_data[index];
+      if ((y_element["LABEL"] == 'sale')) {
+        sale_list.push([y_element["DATE"],y_element["PRICE"],]);
+      }else if ((y_element["LABEL"] == 'transfer')) {
+        transfer_list.push([y_element["DATE"],y_element["PRICE"],]);
+      }else if ((y_element["LABEL"] == 'mint')) {
+        mint_list.push([y_element["DATE"],y_element["PRICE"],]);
+      }
+    }
+
+    var options = {
+      series: [{
+        name: 'mint',
+        data: mint_list
+      },
+      {
+        name: 'transfer',
+        data: transfer_list
+      },
+      {
+        name: 'sale',
+        data: sale_list
+      },
+      {
+        name: 'predicted price',
+        data: predicted_price_list
+      },
+      ],
+      chart: {
+        height: 350,
+        type: 'scatter',
+        zoom: {
+          type: 'xy'
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      
+      grid: {
+        xaxis: {
+          lines: {
+            show: true
+          }
+        },
+        yaxis: {
+          lines: {
+            show: true
+          }
+        },
+      },
+      xaxis: {
+        type: 'datetime',
+      },
+      yaxis: {
+        labels: {
+          formatter: function (val) {
+            return (val).toFixed(0.1);
+          },
+          max: 70
+
+        },
+      }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#sales_price"), options);
+    chart.render();
+  };
+  sales_price_api();
+</script>
+
+<script type="text/javascript">
+  
+  async function box_plot_api() {
+
+    var elem = document.getElementById('box_plot');
+    line_data = JSON.parse(elem.getAttribute('data-box_plot'));
+    
+    console.log(line_data);
+    var options = {
+          series: [
+          {
+            type: 'boxPlot',
+            data:line_data
+          }
+        ],
+          chart: {
+          type: 'boxPlot',
+          height: 350
+        },
+        title: {
+          text: '',
+          align: 'left'
+        },
+        plotOptions: {
+          boxPlot: {
+            colors: {
+              upper: '#5C4742',
+              lower: '#A5978B'
+            }
+          }
+        },
+        yaxis: {
+        labels: {
+          formatter: function (val) {
+            return (val).toFixed(0.1);
+          },
+          max: 70
+
+        },
+      }
+        };
+
+    var chart = new ApexCharts(document.querySelector("#box_plot"), options);
+    chart.render();
+  };
+  box_plot_api();
+</script>
+
+{% endblock %} 

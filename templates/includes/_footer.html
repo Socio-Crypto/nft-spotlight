@@ -1,0 +1,10 @@
+{% load static %}
+{% with current_path=request.resolver_match.url_name %}
+
+<div class="footer-back">
+    <img src="/static/images/amssess.png" class="footer-img-1" />
+    <a href="#">
+        <img src="/static/images/developed-by-danalytica.png" class="footer-img-2" />
+    </a>
+</div>
+{% endwith %}

@@ -1,0 +1,123 @@
+﻿$white: #ffffff;
+$blue-grey-400: #78909c !default;
+$grey-900: #212121 !default;
+$purple-400: #2D306A !default;
+$purple-500:#a60b56 !default;
+$purple-600: #746e71 !default;
+$dark-bg:    #191f28 !default;
+$card-bg:    #20262f !default;
+$menu-color: #47A2DF !default;
+$loader-color: #2D306A !default;
+
+.theme-purple{
+    
+    .btn-primary{
+        background: $purple-500;
+        &:active,
+        &:hover,
+        &:visited,
+        &:focus{
+            background: $purple-400 !important;
+        }
+        &.btn-simple{
+            border-color: $purple-500 !important;
+            color: $purple-500 !important;
+            background: transparent;
+        }
+    }
+    .page-loader-wrapper,
+    .active-bg{
+        background:$loader-color;
+    }
+    .sidebar{
+        .menu{
+            .list{
+                li.active.open {                   
+                    .active a{
+                        color:$menu-color;
+                    }  
+                }
+                a{
+                    &:hover{
+                        color:$menu-color;
+                    }
+                }
+            }
+        }
+
+        &.h_menu{
+            .menu li{
+                &.active.open{
+                    > a{
+                        color: $menu-color;
+                        &:before{
+                            background: $menu-color;;
+                        }
+                    }
+                }
+                a{
+                    &:hover{
+                        &:before{
+                            background: $menu-color;;                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .checkbox input[type="checkbox"]:checked+label::after{
+        border-color:$purple-500;
+        background: $purple-500;
+        color: $white;
+    }  
+    .nav-tabs{
+        .nav-link.active {
+            border: 1px solid $purple-500 !important;
+            background: $purple-500;
+            color: $white;
+        }
+    }
+    .card{
+        .header{
+            h2{
+                &:before{
+                    background: $purple-500;
+                }
+                strong{
+                    color: $purple-500;
+                }
+            }
+            .dropdown-menu{
+                li{
+                    a{
+                        &:hover{
+                            background-color: $purple-500;
+                            color: $white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .authentication{
+        .navbar, .page-header{
+            background: $purple-500 !important;
+        }
+    }    
+    .form-control:focus,
+    .form-control:focus+.input-group-addon, .form-control:focus ~ .input-group-addon{
+        border-color: $purple-500;
+    }
+
+
+    &.theme-dark{
+        .top_navbar{
+            background: $purple-500;
+        }
+        .input-group-focus{
+            .input-group-addon{
+                border-color: $purple-500;
+            }
+        }
+    }
+}

@@ -1,0 +1,108 @@
+{% load i18n %}
+{% load static %}
+{% with current_path=request.resolver_match.url_name %}
+
+<aside id="leftsidebar" class="sidebar">
+    <div class="menu">
+        <ul class="list">
+            <li class="header">MAIN</li>
+            <li><a href="{% url 'assessment-list' %}"><i class="icon-puzzle"></i><span>Assessment projects</span></a>
+            <!-- <li><a href="javascript:void(0);" class="menu-toggle"><i class="icon-grid"></i><span>App</span></a> -->
+                {% if current_path == 'assessment-list' or current_path == 'registeration-request' or current_path == 'assessment-create' or current_path == 'help' or current_path == 'help-1' or current_path == 'help-2' or current_path == 'help-3' or current_path == 'registration-requests' %}
+                {% else  %}
+                <ul class="ml-menu">
+                    <li><a href="{% url 'assessment-detail' pk=assessment.id %}"><i class="icon-speedometer"></i><span>Overview</span></a></li>
+                    <li><a href="{% url 'assessment-detail-temp' pk=assessment.id %}"><i class="icon-grid"></i><span>Evaluation</span></a></li>
+                    <li><a href="{% url 'assessment-group-details' member_id=first_group_member.id %}"><i class="icon-grid"></i><span>Data entry</span></a></li>
+                    <li><a href="{% url 'assessment-members' pk=assessment.id %}"><i class="icon-grid"></i><span>Create team</span></a></li>
+                    <li><a href="{% url 'assessment-group-progress' pk=assessment.id %}"><i class="icon-grid"></i><span>Group progress</span></a></li>
+                    <li><a href="{% url 'assessment-group-result' group_id=first_group.id %}"><i class="icon-grid"></i><span>Group results</span></a></li>
+                    <li><a href="{% url 'assessment-final-results' pk=assessment.id %}"><i class="icon-grid"></i><span>Final results</span></a></li>
+                    <li><a href="{% url 'assessment-final-reports'  pk=assessment.id %}"><i class="icon-grid"></i><span>Final report</span></a></li>
+                </ul>
+                {% endif %}
+            </li>
+            <li class="header">EXTRA COMPONENTS</li>                    
+            
+            <li><a href="{% url 'registration-requests' %}"><i class="icon-puzzle"></i><span>Registration applications</span></a></li>
+            <li><a href="{% url 'pcn_admin:index' %}"><i class="icon-puzzle"></i><span>Management</span></a></li>
+            <li><a href="{% url 'help' %}"><i class="icon-puzzle"></i><span>Help</span></a></li>
+        </ul>
+    </div>
+</aside>
+
+<!-- Right Sidebar -->
+<aside id="rightsidebar" class="right-sidebar">
+    <div class="slim_scroll">
+        <div class="card">
+            <h6>Skins</h6>
+            <ul class="choose-skin list-unstyled">
+                <li data-theme="purple" class="active">
+                    <div class="purple"></div>
+                </li>                   
+                <li data-theme="blue">
+                    <div class="blue"></div>
+                </li>
+                <li data-theme="cyan">
+                    <div class="cyan"></div>
+                </li>
+                <li data-theme="green">
+                    <div class="green"></div>
+                </li>
+                <li data-theme="orange">
+                    <div class="orange"></div>
+                </li>
+                <li data-theme="blush">
+                    <div class="blush"></div>
+                </li>
+            </ul>
+        </div>
+        <div class="card theme-light-dark">
+            <h6>Left Menu</h6>
+            <button class="btn btn-default btn-block btn-round btn-simple t-light">Light</button>
+            <button class="btn btn-default btn-block btn-round t-dark">Dark</button>
+        </div> 
+        <div class="card">
+            <h6>General Settings</h6>
+            <ul class="setting-list list-unstyled">
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox1" type="checkbox">
+                        <label for="checkbox1">Report Panel Usage</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox2" type="checkbox" checked="">
+                        <label for="checkbox2">Email Redirect</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox3" type="checkbox" checked="">
+                        <label for="checkbox3">Notifications</label>
+                    </div>                        
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox4" type="checkbox" checked="">
+                        <label for="checkbox4">Auto Updates</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox5" type="checkbox" checked="">
+                        <label for="checkbox5">Offline</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox">
+                        <input id="checkbox6" type="checkbox" checked="">
+                        <label for="checkbox6">Location Permission</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</aside>
+{% endwith %}
