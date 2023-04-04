@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 django-admin = "*"
 django = "*"
-shroomdk = "*"
 
 [dev-packages]
 
