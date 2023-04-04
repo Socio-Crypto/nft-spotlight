@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'NftDashboard',
-    'wallet'
 ]
 
 MIDDLEWARE = [
@@ -60,7 +59,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / "templates",
             BASE_DIR / "frontend/build",
             
         ],
