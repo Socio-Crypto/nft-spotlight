@@ -89,16 +89,16 @@ WSGI_APPLICATION = 'spotlight.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wpjxpsad',
-        'USER': 'wpjxpsad',
-        'PASSWORD': 'V3zySqP1b36SE3QrsWXQl2Fop-j3WxaC',
-        'HOST': 'lallah.db.elephantsql.com',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'wpjxpsad',
+#         'USER': 'wpjxpsad',
+#         'PASSWORD': 'V3zySqP1b36SE3QrsWXQl2Fop-j3WxaC',
+#         'HOST': 'lallah.db.elephantsql.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
