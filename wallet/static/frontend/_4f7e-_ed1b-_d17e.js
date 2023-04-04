@@ -1,2 +1,0 @@
-/*! For license information please see _4f7e-_ed1b-_d17e.js.LICENSE.txt */
-(self.webpackChunkwallet=self.webpackChunkwallet||[]).push([["_4f7e-_ed1b-_d17e"],{"?4f7e":()=>{},"?ed1b":()=>{},"?d17e":()=>{}}]);
