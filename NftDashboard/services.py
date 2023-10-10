@@ -1,7 +1,6 @@
 import json
-from shroomdk import ShroomDK
 from datetime import datetime
-
+from flipside import Flipside
 
 def convert_records_to_dict(sdk_records):
    
@@ -10,79 +9,82 @@ def convert_records_to_dict(sdk_records):
         data = sdk_records[0]
     return data
 
+def get_result_from_query(sql_query):
+    
+    flipside = Flipside("693499b7-8af2-4914-a193-5d13085ee9be", "https://api-v2.flipsidecrypto.xyz")
+    result = flipside.query(sql_query)
+
+    activity_data = {}
+    if result.records is not None:
+        activity_data = result.records
+    return activity_data
 
 
-def get_ethereum_sales_data_dynamic_token_and_address(collection_name, nft_asset_id):
+def get_ethereum_sales_data_dynamic_token_and_address(project_name, token_id):
    
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f""" 
-       SELECT a.*, b.price as last_sale
-        FROM (
-        SELECT x.nft_asset_id,
-        COUNT (DISTINCT tx_group_id) as num_sales,
-        avg(total_sales_amount/number_of_nfts) as average_price
-        FROM flipside_prod_db.algorand.nft_sales x
-        LEFT JOIN flipside_prod_db.algorand.nft_asset y
-        ON x.nft_asset_id = y.nft_asset_id
-        WHERE collection_name = ('{collection_name}')
-        GROUP BY x.nft_asset_id) a
+       SELECT a.*, b.price as last_sale, b.price_usd as last_price_usd
+        FROM
+        (SELECT tokenid,
+        count(DISTINCT tx_hash) as num_sales,
+        avg(price_usd) as avg_price_usd,
+        avg(price) as average_price
+        FROM ethereum.core.ez_nft_sales
+        WHERE project_name = '{project_name}' and tokenid = '{token_id}'
+        GROUP by
+        tokenid) a
         LEFT JOIN (
-        SELECT nft_asset_id, total_sales_amount/number_of_nfts as price, rank
-        FROM (
-            SELECT x.*,y.collection_name, rank()over(partition by x.nft_asset_id ORDER BY block_timestamp DESC) as rank
-            FROM flipside_prod_db.algorand.nft_sales x
-            LEFT JOIN flipside_prod_db.algorand.nft_asset y
-            ON x.nft_asset_id = y.nft_asset_id
-            WHERE collection_name = ('{collection_name}')
-                )
+        SELECT tokenid,
+        price,price_usd, rank
+        FROM(
+        SELECT *,
+        rank()over(partition by tokenid ORDER BY block_timestamp DESC) as rank
+        FROM ethereum.core.ez_nft_sales
+        WHERE project_name = '{project_name}' and tokenid = '{token_id}'
+        )
         WHERE rank = 1
-                ) b
-        ON a.nft_Asset_id = b.nft_asset_id
-        where a.nft_Asset_id = {nft_asset_id}
+        ) b
+        ON a.tokenid = b.tokenid
     """
-
-    result = sdk.query(sql_query).records
+    result = get_result_from_query(sql_query)
     data = {}
     if result is not None:
         data = result[0]
     return data
 
 
-
-def get_nft_sales_eth(address, token_id):
+def get_nft_sales_eth(project_name, token_id):
     """ NFT sales history"""
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
     SELECT block_number, date_trunc('day',block_timestamp) as date, buyer_address, seller_address, currency_symbol, price, tokenid, project_name AS project_name, platform_name
     FROM ethereum.core.ez_nft_sales
-    WHERE nft_address = lower('{address}') and tokenid = {token_id}
+    WHERE project_name = '{project_name}' and tokenid = '{token_id}'
     ORDER BY date
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
     sales_price= []
     index = 0
-    if result.records is not None:
-        for record in result.records:
+    # if result.records is not None:
+    for record in result:
 
-            sales_price.append({})
-            py_date = datetime.strptime(record['date'][:19], '%Y-%m-%d %H:%M:%S')
-            formatted_date = py_date.strftime('%m/%d/%Y')
+        sales_price.append({})
+        py_date = datetime.strptime(record['date'][:19], '%Y-%m-%dT%H:%M:%S')
+        formatted_date = py_date.strftime('%m/%d/%Y')
 
-            sales_price[index]['DATE'] = formatted_date
-            sales_price[index]['PRICE'] = record['price']
-            
-            index += 1
-    return [json.dumps(sales_price), convert_records_to_dict(sdk.query(sql_query).records)]
+        sales_price[index]['DATE'] = formatted_date
+        sales_price[index]['PRICE'] = record['price']
+        
+        index += 1
+    return [json.dumps(sales_price), convert_records_to_dict(get_result_from_query(sql_query))]
 
 
 def get_nft_sales_algorand(nft_asset_id):
     """ NFT sales history"""
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
         SELECT date_trunc('day', a.block_timestamp) as date, a.tx_group_id, a.nft_marketplace AS marketplace, 
                     a.purchaser AS buyer, a.nft_asset_id AS token, b.collection_name AS collection, total_sales_amount AS price
@@ -92,109 +94,151 @@ def get_nft_sales_algorand(nft_asset_id):
         WHERE a.nft_asset_id = '{nft_asset_id}' 
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
     sales_price= []
     index = 0
-    if result.records is not None:
-        for record in result.records:
 
-            sales_price.append({})
-            py_date = datetime.strptime(record['date'][:19], '%Y-%m-%d %H:%M:%S')
-            formatted_date = py_date.strftime('%m/%d/%Y')
+    for record in result:
 
-            sales_price[index]['DATE'] = formatted_date
-            sales_price[index]['PRICE'] = record['price']
-            
-            index += 1
-    return [json.dumps(sales_price), convert_records_to_dict(sdk.query(sql_query).records)]
+        sales_price.append({})
+        py_date = datetime.strptime(record['date'][:19], '%Y-%m-%d %H:%M:%S')
+        formatted_date = py_date.strftime('%m/%d/%Y')
+
+        sales_price[index]['DATE'] = formatted_date
+        sales_price[index]['PRICE'] = record['price']
+        
+        index += 1
+    return [json.dumps(sales_price), convert_records_to_dict(get_result_from_query(sql_query))]
 
 
-def get_nft_ethereum_meta_data(address, token_id):
+def get_nft_ethereum_meta_data(project_name, nft_asset_id):
     """ """
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
         SELECT *
-        FROM ethereum.core.dim_nft_metadata
-        where contract_address = lower('{address}')
-        AND token_id = {token_id}
+        FROM ethereum.nft.dim_nft_metadata
+        where  project_name = '{project_name}' and token_id = '{nft_asset_id}'
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
-    return convert_records_to_dict(result.records)
+    return convert_records_to_dict(result)
 
 
 
-def get_nft_image_url(nft_asset_id):
+def get_nft_image_url(project_name, nft_asset_id):
     """ """
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
-       SELECT nft_url, nft_asset_id
-        FROM algorand.nft.ez_nft_asset
-        WHERE nft_asset_id = '{nft_asset_id}'
+
+        Select 
+            image_url 
+        from ethereum.nft.dim_nft_metadata
+        where project_name = '{project_name}' and token_id = '{nft_asset_id}'
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
     data = ''
     nft_is_exist = False
-    if result.records:
-        for a in result.records:
-            data = a['nft_url'][7:]
+    # if result.records:
+    for a in result:
+        data = a['image_url'][7:]
      
     return data
 
 
-def get_nft_ethereum_meta_data_with_dynamic_address(address):
+def get_nft_ethereum_meta_data_with_dynamic_address(project_name):
     """ """
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
         SELECT *
         FROM ethereum.core.dim_nft_metadata
-        where contract_address = lower('{address}')
+        where project_name = '{project_name}' 
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
-    return result.records
+    return result
 
-def get_activity_for_ethereum(address, token_id):
+
+
+# def get_nft_data_for_eth(address, token_id):
+#     """
+#     return NFT features
+#     """
+#     sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
+#     sql_query = f"""
+#         SELECT a.*, b.price as last_sale, b.price_usd as last_price_usd
+#         FROM
+#         (SELECT tokenid,
+#         token_metadata:Background as background,
+#         token_metadata:Clothes as Clothes,
+#         token_metadata:Eyes as Eyes,
+#         token_metadata:Fur as Fur,
+#         token_metadata:Hat as Hat,
+#         token_metadata:Mouth as mouth,
+#         count(DISTINCT tx_hash) as num_sales,
+#         avg(price_usd) as avg_price_usd,
+#         avg(price) as average_price
+#         FROM ethereum.core.ez_nft_sales
+#         WHERE nft_address = lower('{address}')
+#         GROUP by
+#         tokenid,background,clothes,eyes,fur,hat,mouth) a
+#         LEFT JOIN (
+#         SELECT tokenid,
+#         price,price_usd, rank
+#         FROM(
+#         SELECT *,
+#         rank()over(partition by tokenid ORDER BY block_timestamp DESC) as rank
+#         FROM ethereum.core.ez_nft_sales
+#         WHERE nft_address = lower('{address}')
+#         )
+#         WHERE rank = 1
+
+#         ) b
+#         ON a.tokenid = b.tokenid
+#         where a.tokenid = {token_id}
+#     """
+#     result = sdk.query(sql_query).records
+#     data = {}
+#     if result is not None:
+#         data = result[0]
+#     return data
+
+
+def get_activity_for_ethereum(project_name, token_id):
     """
     """
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
         SELECT 'sale' as label,
         block_number, date_trunc('day',block_timestamp) as date, buyer_address, seller_address, currency_symbol, price, tokenid, project_name, platform_name, tx_hash
             FROM ethereum.core.ez_nft_sales
-        WHERE nft_address = lower('{address}') and tokenid = {token_id}
+        WHERE project_name = '{project_name}' and tokenid = '{token_id}'
         UNION
         SELECT 'mint' as label,
         block_number, date_trunc('day',block_timestamp) as date, nft_to_address as buyer_address, '' as seller_address, 'ETH' as currency_symbol, mint_price_eth as price, tokenid, project_name, '' as platform_name,tx_hash
         FROM ethereum.core.ez_nft_mints    
-        WHERE nft_address = lower('{address}') and tokenid = {token_id}
+        WHERE project_name = '{project_name}' and tokenid = '{token_id}'
         UNION
         SELECT 'transfer' as label,
         block_number, date_trunc('day',block_timestamp) as date, nft_to_address as buyer_address, nft_from_address as seller_address, '' as currency_symbol, '0' as price, tokenid, project_name, '' as platform_name,tx_hash
         FROM ethereum.core.ez_nft_transfers    
         WHERE nft_from_address != '0x0000000000000000000000000000000000000000'
-        AND nft_address = lower('{address}') and tokenid = {token_id}
+        AND project_name = '{project_name}' and tokenid = '{token_id}'
         
 
         ORDER BY block_number desc
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
-    return result.records
+    return result
 
 
 def get_activity_for_algorand(nft_asset_id):
     """
     """
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
         SELECT 'sale' as label,
             block_id, date_trunc('day',block_timestamp) as date, purchaser as buyer_address, 'ALGO' as currency_symbol, total_sales_amount/number_of_nfts as price, x.nft_asset_id, y.collection_name, nft_marketplace as platform_name, tx_group_id
@@ -204,47 +248,54 @@ def get_activity_for_algorand(nft_asset_id):
         WHERE x.nft_asset_id = {nft_asset_id} 
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
-    return result.records
+    return result
 
 def get_box_plot_data_for_a_collection_algorand(collection_name):
 
-    sdk = ShroomDK("0aa823ca-fc7c-485a-9412-4d96b04e54be")
     sql_query = f"""
-       WITH nfts as (
-        SELECT nft_asset_id
-        FROM flipside_prod_db.algorand.nft_asset
-                WHERE collection_name = '{collection_name}'
-        ),
-        sales_data AS (
-                SELECT 
-                block_id, date_trunc('week',block_timestamp) as date, 'algo' as currency_symbol, total_sales_amount/number_of_nfts as price 
-                FROM flipside_prod_db.algorand.nft_sales
-                WHERE nft_asset_id IN (SELECT nft_asset_id FROM nfts)
-                )
-
-                SELECT a.date,
-                    MIN(s.price) AS minimum,
-                    AVG(q1) AS q1,
-                    AVG(median) AS median,
-                    AVG(q3) AS q3,
-                    MAX(s.price) AS maximum
-                FROM (
-                SELECT date,
-                    PERCENTILE_CONT(0.25) WITHIN GROUP 
-                        (ORDER BY price) OVER (PARTITION BY date) AS q1,
-                    MEDIAN(price) OVER (PARTITION BY date) AS median,
-                    PERCENTILE_CONT(0.75) WITHIN GROUP 
-                        (ORDER BY price) OVER (PARTITION BY date) AS q3
-                FROM sales_data
-                )a
-                LEFT JOIN sales_data s
-                ON s.date = a.date
-                GROUP BY 1
-                ORDER BY date
+        WITH sales_data AS (
+        SELECT
+            BLOCK_NUMBER,
+            date_trunc('week', block_timestamp) as date,
+            CURRENCY_SYMBOL,
+            PRICE as price
+        FROM
+            ethereum.nft.ez_nft_sales
+        WHERE
+            project_name = '{collection_name}'
+        )
+        SELECT
+        a.date,
+        MIN(s.price) AS minimum,
+        AVG(q1) AS q1,
+        AVG(median) AS median,
+        AVG(q3) AS q3,
+        MAX(s.price) AS maximum
+        FROM
+        (
+            SELECT
+            date,
+            PERCENTILE_CONT(0.25) WITHIN GROUP (
+                ORDER BY
+                price
+            ) OVER (PARTITION BY date) AS q1,
+            MEDIAN(price) OVER (PARTITION BY date) AS median,
+            PERCENTILE_CONT(0.75) WITHIN GROUP (
+                ORDER BY
+                price
+            ) OVER (PARTITION BY date) AS q3
+            FROM
+            sales_data
+        ) a
+        LEFT JOIN sales_data s ON s.date = a.date
+        GROUP BY
+        1
+        ORDER BY
+        date
     """
 
-    result = sdk.query(sql_query)
+    result = get_result_from_query(sql_query)
 
-    return result.records
+    return result
