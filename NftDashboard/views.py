@@ -92,10 +92,10 @@ def change_json_to_dict(json_data):
 def prediction_price_from_abacus(deployment_id, context):
     try:
         data_for_prediction = {key: value for key, value in context.items()}
-        data_for_prediction["item"] = 13
-        data_for_prediction["date"] = datetime.now().strftime("%m/%d/%Y")
+        data_for_prediction["Column_c0"] = '21'
+        data_for_prediction["date"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
         attributes = [
-            "item",
+            "Column_c0",
             "date",
             "tokenid",
             "num_sales",
@@ -150,7 +150,7 @@ def get_proper_data_for_scatter_plot(data):
     index = 0
     for item in data:
         sales_price.append({})
-        py_date = datetime.strptime(item["date"][:19], "%Y-%m-%d %H:%M:%S")
+        py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
         formatted_date = py_date.strftime("%m/%d/%Y")
 
         sales_price[index]["DATE"] = formatted_date
@@ -174,7 +174,7 @@ def get_data_for_box_plot(collection_name):
     if data is not None:
         for item in data:
             box_plot_data.append({})
-            py_date = datetime.strptime(item["date"][:19], "%Y-%m-%d %H:%M:%S")
+            py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
             formatted_date = py_date.strftime("%m/%d/%Y")
 
             box_plot_data[index]["x"] = formatted_date
@@ -189,14 +189,15 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
 
     """get features of a NFT"""
     context = {}
+    collection = Collection.objects.filter(collection_name=collection_name).first()
 
     # context.update(services.get_nft_data_for_eth(collection_name, token_id))
     context["tokenid"] = nft_asset_id
 
-    # context['sales_data'], context['sales_data_table'] = services.get_nft_sales_eth(collection_name, token_id)
-    (context["sales_data"], context["sales_data_table"],) = services.get_nft_sales_algorand(nft_asset_id)
+    context['sales_data'], context['sales_data_table'] = services.get_nft_sales_eth(collection_name, nft_asset_id)
+    # (context["sales_data"], context["sales_data_table"],) = services.get_nft_sales_algorand(nft_asset_id)
 
-    context["item_activity"] = services.get_activity_for_algorand(nft_asset_id)
+    context["item_activity"] = services.get_activity_for_ethereum(collection_name, nft_asset_id)
 
 
     if context["item_activity"] is not None:
@@ -204,11 +205,12 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
             context["item_activity"]
         )
 
-        if collection_name != context['item_activity'][0]['collection_name']:
-            collection_name = context['item_activity'][0]['collection_name']
+        if collection_name != context['item_activity'][0]['project_name']:
+            collection_name = context['item_activity'][0]['project_name']
             unknown_collections = True
         else:
-            context["image_url"] = services.get_nft_image_url(nft_asset_id)
+            context["image_url"] = services.get_nft_image_url(collection.name.lower().replace(" ", "_"), nft_asset_id)
+            context['features'] =  services.get_nft_ethereum_meta_data(collection.name.lower().replace(" ", "_"), nft_asset_id)['token_metadata']
 
     if context["item_activity"] is None:
         collection_name = ''
@@ -221,7 +223,9 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
             collection_name, nft_asset_id
         )
     )
-    collection = Collection.objects.filter(collection_name=collection_name).first()
+
+    context['traits_rarity'] = get_traits_rarity(collection.name.lower().replace(" ", "_"))
+
     if not unknown_collections:
         context.update(
             prediction_price_from_abacus(collection.abacus_deployment_id, context)
@@ -232,7 +236,7 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
     context["show_nft"] = True
 
     # co
-    context["blockchain"] = "algo"
+    context["blockchain"] = "eth"
     context['unknown_collections']= unknown_collections
     return context
 
@@ -296,7 +300,7 @@ class CollectionExplorer(TemplateView):
 
         context["nft_asset_id"] = nft_asset_id
         context["contract_id"] = collection_name
-        context["today_date"] = json.dumps(date.today().strftime("%m/%d/%y"))
+        context["today_date"] = date.today().strftime('%Y-%m-%dT%H:%M:%S%z')
         return render(request, self.template_name, context)
 
 

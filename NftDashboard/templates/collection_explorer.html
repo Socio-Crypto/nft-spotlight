@@ -75,23 +75,14 @@ NFT Explorer
           <div class="col-12">
             <ul class="social-links list-unstyled">
               <li>
-                <a title="" href="https://www.nftexplorer.app/asset/{{ nft_asset_id }}" target="_blank">
+                <a title="" href="https://opensea.io/assets/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/{{ nft_asset_id }}" target="_blank">
                  <img width="27px" style="height: 29px;
                  width: 31px;
-               border-radius:18px;" src="/static/images/icons/nftexplorer.jpg"  >
+               border-radius:18px;" src="/static/images/icons/opensea.svg"  >
                   
                 </a>
               </li>
-              <li>
-                <a title="" href="https://algoexplorer.io/asset/{{ nft_asset_id }}" target="_blank">
-                 <img width="27px" style="height: 35px;     margin-left: -13px;
-                 width: 35px;" src="/static/images/icons/algoexplorer.jpg">
-                  
-                </a>
-              </li>
-  
             </ul>
-           
           </div>
           <hr>
           <div class="row">
@@ -149,15 +140,11 @@ NFT Explorer
                 <img width="27px" style="margin: 5px;"src="/static/images/icons/twitter.svg">
               </a>
             {% endif %}
-        
-              <a title="" href="https://www.nftexplorer.app/asset/{{ nft_asset_id }}" target="_blank">
-               <img style="margin-top: 26px;     height: 31px;  border-radius:18px;" src="/static/images/icons/nftexplorer.jpg"  >
-              </a>
 
-              <a title="" href="https://algoexplorer.io/asset/{{ nft_asset_id }}" target="_blank">
+              <a title="" href="https://opensea.io/collection/boredapeyachtclub" target="_blank">
                <img style="    margin-top: 23px;
                margin-left: 10px;
-               height: 37px;" src="/static/images/icons/algoexplorer.jpg">
+               height: 37px;" src="/static/images/icons/opensea.svg">
               </a>
           
           </div>
@@ -178,9 +165,7 @@ NFT Explorer
             </div>
             <div class="col-4 pw_meta" style="align-self: center;">
               <h6>{% if predicted_price %}Predicted Price: {{ predicted_price }} 
-                {% if blockchain == 'algo' %}<img class="guide-cont shadow-sm" width="17px" src="/static/images/icons/algorand_logo.png">
-                {% elif blockchain == 'avalanche' %}<img class="guide-cont shadow-sm" width="15px" src="/static/images/icons/avalanche.png">
-                {% elif blockchain == 'polygon' %}<img class="guide-cont shadow-sm" width="20px" src="/static/images/icons/polygon.jpg">
+                {% if blockchain == 'eth' %}<img class="guide-cont shadow-sm" width="17px" src="/static/images/icons/ethereum_logo.png">
                 {% endif %}
                 {% endif %}
               </h6>
@@ -218,7 +203,7 @@ NFT Explorer
     
         </div>
       </div>
-      {% if blockchain == 'algo' %}
+      {% if blockchain == 'eth' %}
       <div class="card">
         <div class="body">    
           <div id="box_plot" data-box_plot="{{ box_plot_data|unlocalize }}"></div>
@@ -244,7 +229,7 @@ NFT Explorer
               </tr>
             </thead>
             <tbody>
-              {% if blockchain == 'algo' %}
+              {% if blockchain == 'eth' %}
               {% for item in item_activity %}
               <tr>
                 <td>
@@ -261,7 +246,7 @@ NFT Explorer
                 </td>
                 <td>
                   {% if item.price %}
-                    {% if blockchain == 'algo' %}<img class="guide-cont shadow-sm" width="17px" src="/static/images/icons/algorand_logo.png">
+                    {% if blockchain == 'eth' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/ethereum_logo.png">
                     {% elif blockchain == 'avalanche' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/avalanche.png">
                     {% elif blockchain == 'polygon' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/polygon.jpg">
                     {% endif %}
@@ -289,7 +274,7 @@ NFT Explorer
                     {{ value.price|floatformat:1 }}</td>
                     <td>{{ value.seller|truncatechars:7 }}</td>
                     <td>{{ value.buyer|truncatechars:7 }}</td>
-                    <td><a href="https://etherscan.io/tx/{{ value.tx_hash }}/" target="_blank">{{ value.date|get_date }}</a></td>
+                    <td><a href="https://etherscan.io/tx/{{ value.tx_hash }}/" target="_blank">{{ value.date }}</a></td>
                 </tr>
               {% endfor %}
             {% endif %}
@@ -471,7 +456,8 @@ NFT Explorer
   async function sales_price_api() {
     
     var price_predicted = document.getElementById('price_prediction').value;
-    var today_date = JSON.parse(document.getElementById('today_date').value);
+    var today_date = document.getElementById('today_date').value;
+    console.log('today_date', today_date)
     predicted_price_list.push([today_date, price_predicted],);
     console.log(predicted_price_list)
     console.log(sale_list)
@@ -487,7 +473,7 @@ NFT Explorer
         mint_list.push([y_element["DATE"],y_element["PRICE"],]);
       }
     }
-
+console.log('mint_list', mint_list)
     var options = {
       series: [{
         name: 'mint',
