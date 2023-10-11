@@ -4,8 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django-admin = "*"
+shroomdk = "*"
+abacusai = "*"
+beautifulsoup4 = "*"
+psycopg2-binary = "*"
 django = "*"
+pillow = "*"
+gunicorn = "*"
+whitenoise = "*"
 
 [dev-packages]
 

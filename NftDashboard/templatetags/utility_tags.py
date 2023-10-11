@@ -5,7 +5,7 @@ register = template.Library()
 @register.filter
 def get_date(date):
     from datetime import datetime
-    diff_date = (datetime.today() - datetime.strptime(date[:19], '%Y-%m-%dT%H:%M:%S')).days
+    diff_date = (datetime.today() - datetime.strptime(date[:19], '%Y-%m-%d %H:%M:%S')).days
     text = 'days ago'
     if diff_date > 365:
         diff_date = round(diff_date /365)
