@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rn%d3o=@lxxxqebhfza-=4()ikw&f!h^31dr9gjcj^x(c1!t-c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -92,9 +92,9 @@ WSGI_APPLICATION = 'spotlight.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'spotlight'),
-        'USER': os.environ.get('DB_USER', 'spotlight'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'spotlight'),
+        'NAME': os.environ.get('DB_NAME', 'btre_prod'),
+        'USER': os.environ.get('DB_USER', 'dbadmin'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'abc123!'),
         'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
