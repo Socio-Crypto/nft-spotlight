@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'btre_prod'),
         'USER': os.environ.get('DB_USER', 'dbadmin'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'abc123!'),
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
