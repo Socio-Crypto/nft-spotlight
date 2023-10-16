@@ -191,7 +191,7 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
     # context.update(services.get_nft_data_for_eth(collection_name, token_id))
     context["tokenid"] = nft_asset_id
 
-    context['sales_data'], context['sales_data_table'] = services.get_nft_sales_eth(collection_name, nft_asset_id)
+    # context['sales_data'], context['sales_data_table'] = services.get_nft_sales_eth(collection_name, nft_asset_id)
     # (context["sales_data"], context["sales_data_table"],) = services.get_nft_sales_algorand(nft_asset_id)
 
     context["item_activity"] = services.get_activity_for_ethereum(collection_name, nft_asset_id)
@@ -213,7 +213,7 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
         collection_name = ''
         unknown_collections = True
 
-    context["box_plot_data"] = get_data_for_box_plot(collection_name)
+    context["collection_average_price"] = json.dumps(services.get_weekly_collection_average_eth(collection_name))
 
     context.update(
         services.get_ethereum_sales_data_dynamic_token_and_address(

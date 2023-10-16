@@ -35,7 +35,12 @@ NFT Explorer
 
               <div class="row clearfix">
                 <div class="col-lg-6 col-md-6">
-                  <input name="" type="number" min="1" class="form-control" id="n_asset" placeholder="Asset ID">
+                  <input name="" type="number" min="1" class="form-control" id="n_asset" placeholder="Asset ID"  style="{% if error %} border-color: crimson; {% endif %}">
+                  {% if error %}
+                  <div class="row clearfix" style="justify-content: center; padding: 17px;">
+                    <p style="color: crimson;">NFT is not available!</p>
+                  </div>
+                  {% endif %}
                 </div>
                 <div class="col-lg-2">
                   <button type="submit" class="search-nft btn btn-primary btn-round" style="margin-top: -4px;"><span
@@ -46,12 +51,6 @@ NFT Explorer
             </div>
 
           </div>
-
-          {% if error %}
-          <div class="row clearfix" style="justify-content: center; padding: 17px;">
-            <p style="color: crimson;">NFT is not available!</p>
-          </div>
-          {% endif %}
 
         </div>
       </div>
@@ -174,15 +173,6 @@ NFT Explorer
     
         </div>
       </div>
-      {% if blockchain == 'eth' %}
-      <div class="card">
-        <div class="body">    
-          <div id="box_plot" data-box_plot="{{ box_plot_data|unlocalize }}"></div>
-          <p class="d-flex justify-content-center" style="align-content: center;font-variant-caps: all-petite-caps;"></p>
-    
-        </div>
-      </div>
-      {% endif %}
       <div class="card">
         <div class="header">
           <h2>Item Activity</h2>
@@ -222,8 +212,9 @@ NFT Explorer
                     {% elif blockchain == 'polygon' %}<img class="guide-cont shadow-sm" width="9px" src="/static/images/icons/polygon.jpg">
                     {% endif %}
                     
-                  {% endif %}
-                  {{ item.price|floatformat:4 }}</td>
+                    {{ item.price|floatformat:4 }}
+                    {% endif %}
+                  </td>
                   <!-- <td>{{ item.seller_address|truncatechars:7 }}</td> -->
                   <td>{{ item.buyer_address|truncatechars:7 }}</td>
                   <td>{{ item.platform_name }}</td>
@@ -253,6 +244,18 @@ NFT Explorer
           </table>
         </div>
       </div>
+
+      <div class="card">
+        <div class="header">
+          <h2>Collection Average Price</h2>
+        </div>
+        <div class="body">    
+          <div id="line_chart" data-line_chart="{{ collection_average_price|unlocalize }}"></div>
+          <p class="d-flex justify-content-center" style="align-content: center;font-variant-caps: all-petite-caps;"></p>
+    
+        </div>
+      </div>
+      
     </div>
   </div>
 
@@ -433,7 +436,7 @@ console.log('mint_list', mint_list)
       yaxis: {
         labels: {
           formatter: function (val) {
-            return (val).toFixed(0.1);
+            return (val).toFixed(4);
           },
           max: 70
 
@@ -449,50 +452,112 @@ console.log('mint_list', mint_list)
 
 <script type="text/javascript">
   
-  async function box_plot_api() {
+  async function line_chart_api() {
 
-    var elem = document.getElementById('box_plot');
-    line_data = JSON.parse(elem.getAttribute('data-box_plot'));
-    
-    console.log(line_data);
+    var elem = document.getElementById('line_chart');
+    console.log('elem.getAttribute(', elem.getAttribute('data-line_chart'))
+    line_data = JSON.parse(elem.getAttribute('data-line_chart'));
+    var transfer_list = []
+    for (let index = 0; index < line_data.length; index++) {
+        const transfer_element = line_data[index];
+        transfer_list.push([transfer_element['date'].slice(0,10),transfer_element['average']]);  
+      }
     var options = {
-          series: [
-          {
-            type: 'boxPlot',
-            data:line_data
+            series: [{
+            name: 'Price',
+            data: transfer_list
+          }],
+            chart: {
+            type: 'line',
+            stacked: false,
+            height: 450,
+            zoom: {
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            },
+            toolbar: {
+            show:true,
+            autoSelected: 'zoom',
+            tools:{
+              download: true,
+              // customIcons: [{
+              //     icon: '<a href="https://app.flipsidecrypto.com/velocity/queries/677cf6ef-dde2-4e77-a79e-f657a0f34a1f" target="_blank"><span class="iconify" data-icon="fa:database"></a>',
+              //     index: 5,
+              //     title: 'Query API',
+              //     class: 'custom-icon'
+              //     }]
+            } 
           }
-        ],
-          chart: {
-          type: 'boxPlot',
-          height: 350
-        },
-        title: {
-          text: '',
-          align: 'left'
-        },
-        plotOptions: {
-          boxPlot: {
-            colors: {
-              upper: '#5C4742',
-              lower: '#A5978B'
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'smooth',
+            width: 2
+          },
+        //   markers: {
+        //     size: 0,
+        //   },
+          title: {
+            text: '',
+            align: 'left'
+          },
+        //   fill: {
+        //     type: 'gradient',
+        //     gradient: {
+        //       shadeIntensity: 1,
+        //       inverseColors: false,
+        //       opacityFrom: 0.5,
+        //       opacityTo: 0,
+        //       stops: [0, 90, 100]
+        //     },
+        //   },
+          yaxis: {
+            labels: {
+              formatter: function (val) {
+                var result = (val / 1000).toFixed(0);
+                return val.toFixed(4) 
+              },
+              style:{
+                colors:['black']
+              }
+              
+            },
+            title: {
+              text: 'ETH',
+              style:{
+                color:'black'
+              }
+            },
+            
+          },
+          colors:['#EB54BC'],
+  
+          xaxis: {
+            type: 'datetime',
+            labels:{
+              style:{
+                colors:'black'
+              }
+            }
+
+          },
+          tooltip: {
+            shared: false,
+            y: {
+              formatter: function (val) {
+                return val.toFixed(0)
+              }
             }
           }
-        },
-        yaxis: {
-        labels: {
-          formatter: function (val) {
-            return (val).toFixed(0.1);
-          },
-          max: 70
+          };
 
-        },
-      }
-        };
-
-    var chart = new ApexCharts(document.querySelector("#box_plot"), options);
+        var chart = new ApexCharts(document.querySelector("#line_chart"), options);
     chart.render();
   };
-  box_plot_api();
+  line_chart_api();
 </script>
 
 {% endblock %} 
