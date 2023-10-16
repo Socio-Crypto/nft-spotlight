@@ -272,28 +272,24 @@ class CollectionExplorer(TemplateView):
         unknown_collections = False
         context["show_nft"] = False
 
-        # if url:
-        #     collection_information = url_regex_extraction(url)
-        #     context['nft_url'] = url
-        #     collection_name = collection_information['collection_name']
-        #     nft_asset_id = collection_information['nft_asset_id']
-
-        #     if Collection.objects.filter(collection_name=collection_name).exists() is False:
-        #         unknown_collections = True
-        # # else:
         collection_id = request.POST.get("collection_id")
         if collection_id:
             collection_name = (
                 Collection.objects.filter(id=collection_id).first().collection_name
             )
             nft_asset_id = request.POST.get("n_asset")
-            context["show_nft"] = True
+
 
         context["tokenid"] = nft_asset_id
 
-        context.update(
-            get_nft_feature(unknown_collections, collection_name, nft_asset_id)
-        )
+        if services.check_nft_in_flipside(collection_name, nft_asset_id):
+            context.update(
+                get_nft_feature(unknown_collections, collection_name, nft_asset_id)
+            )
+            context['error'] = False
+            context["show_nft"] = True
+        else:
+            context['error'] = True
 
         context["nft_asset_id"] = nft_asset_id
         context["contract_id"] = collection_name
