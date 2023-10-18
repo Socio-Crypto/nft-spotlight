@@ -116,11 +116,12 @@ def prediction_price_from_abacus(deployment_id, context):
     return context
 
 
-def get_traits_rarity(collection_name):
-    collection_data = services.get_nft_ethereum_meta_data_with_dynamic_address(
-        collection_name
-    )
-
+def get_traits_rarity(collection_name, collection_data):
+    if collection_data is None:
+        collection_data = services.get_nft_ethereum_meta_data_with_dynamic_address(
+            collection_name
+        )
+    
     rarity = {}
     if collection_data is not None:
         for nft_data in collection_data:
@@ -147,7 +148,11 @@ def get_proper_data_for_scatter_plot(data):
     index = 0
     for item in data:
         sales_price.append({})
-        py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
+        try:
+            py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
+        except:
+            py_date = datetime.strptime(item["date"][:19], "%Y-%m-%d %H:%M:%S")
+
         formatted_date = py_date.strftime("%m/%d/%Y")
 
         sales_price[index]["DATE"] = formatted_date
@@ -171,7 +176,10 @@ def get_data_for_box_plot(collection_name):
     if data is not None:
         for item in data:
             box_plot_data.append({})
-            py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
+            try:
+                py_date = datetime.strptime(item["date"][:19], "%Y-%m-%dT%H:%M:%S")
+            except:
+                py_date = datetime.strptime(item["date"][:19], "%Y-%m-%d %H:%M:%S")
             formatted_date = py_date.strftime("%m/%d/%Y")
 
             box_plot_data[index]["x"] = formatted_date
@@ -221,7 +229,7 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
         )
     )
 
-    context['traits_rarity'] = get_traits_rarity(collection.name.lower().replace(" ", "_"))
+    context['traits_rarity'] = get_traits_rarity(collection.name.lower().replace(" ", "_"), [])
 
     if not unknown_collections:
         context.update(
@@ -237,6 +245,46 @@ def get_nft_feature(unknown_collections, collection_name, nft_asset_id):
     context['unknown_collections']= unknown_collections
     return context
 
+def get_a_nft_data():
+    context = {}
+    collection = Collection.objects.filter(collection_name='Bored Ape Yacht Club').first()
+
+    import requests
+
+    context["item_activity"] = requests.get('https://api.flipsidecrypto.com/api/v2/queries/fa81e1f8-96df-4fba-b6c2-842a40c9190c/data/latest').json()
+
+
+    if context["item_activity"] is not None:
+        context["scatter_plot_data"] = get_proper_data_for_scatter_plot(
+            context["item_activity"]
+        )
+
+        context["image_url"] = requests.get('https://api.flipsidecrypto.com/api/v2/queries/48e44249-75b4-4bdc-9c15-6642110600c4/data/latest').json()[0]['image_url'][7:]
+        context['features'] =  requests.get('https://api.flipsidecrypto.com/api/v2/queries/18c2402e-0477-43d6-aa16-2ddfdb5b3d0b/data/latest').json()[0]['token_metadata']
+
+
+    context["collection_average_price"] = json.dumps(requests.get('https://api.flipsidecrypto.com/api/v2/queries/58d9d82b-748a-4f45-8552-05cb2db448b4/data/latest').json())
+
+    context.update(
+        requests.get('https://api.flipsidecrypto.com/api/v2/queries/f77c294f-e87e-410f-acc0-ffa03610c271/data/latest').json()[0]
+    )
+
+    collection_data = requests.get('https://api.flipsidecrypto.com/api/v2/queries/fd25a511-46e1-4ec7-bcbe-45aafa189057/data/latest').json()
+    context['traits_rarity'] = get_traits_rarity('', collection_data)
+
+    context.update(
+        prediction_price_from_abacus(collection.abacus_deployment_id, context)
+    )  #
+    context["image_name"] = collection.name.lower().replace(" ", "_")
+
+    context["collection"] = collection
+    context["show_nft"] = True
+
+    context["blockchain"] = "eth"
+    context['unknown_collections']= False
+
+    return context
+
 
 class CollectionExplorer(TemplateView):
     template_name = "collection_explorer.html"
@@ -247,15 +295,9 @@ class CollectionExplorer(TemplateView):
         collection_name = request.GET.get("collection_name", None)
         context["show_nft"] = False
 
-        unknown_collections = False
-
-        if nft_asset_id and collection_name:
-            context["show_nft"] = True
-            context.update(get_nft_feature(unknown_collections, collection_name, nft_asset_id))
-
-            context["nft_asset_id"] = nft_asset_id
-            context["contract_id"] = collection_name
-            
+        context["show_nft"] = True
+        context.update(get_a_nft_data())
+        
         context["collections"] = Collection.objects.all()
         context["tokenid"] = nft_asset_id
         context["collection_name"] = collection_name
